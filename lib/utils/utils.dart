@@ -4,13 +4,18 @@ logText(String msg) {
   debugPrint(msg);
 }
 
-pushNavigator(BuildContext context, Widget screen) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => screen),
-  );
-}
-
 Widget verticalSpace(double height) {
   return SizedBox(height: height);
+}
+
+Widget horizontalSpace(double height) {
+  return SizedBox(width: height);
+}
+
+showSnackBar(BuildContext context, String msg) {
+  SnackBar snackBar = SnackBar(
+    behavior: SnackBarBehavior.floating,
+    content: Text(msg),
+  );
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }

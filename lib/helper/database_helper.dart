@@ -1,11 +1,19 @@
 import 'package:sqflite/sqflite.dart';
-import '../models/notes_model.dart';
 
+import '../models/notes_model.dart';
+import '../models/lable_model.dart';
+
+// database version
 int _databaseVersion = 1;
+// table names
 String _tableName = "notes";
+String _lablesTable = "lables";
+// column names
 String _id = "id";
 String _title = "title";
-String _description = "description";
+String _note = "note";
+String _isActive = "isActive";
+String _lable = "lable";
 
 class DatabaseHelper {
   static Database? _database;
@@ -32,7 +40,14 @@ class DatabaseHelper {
           CREATE TABLE IF NOT EXISTS $_tableName (
             $_id INTEGER PRIMARY KEY AUTOINCREMENT,
             $_title TEXT NOT NULL,
-            $_description TEXT NOT NULL
+            $_note TEXT NOT NULL
+          )
+          ''');
+
+    await db.execute('''
+          CREATE TABLE IF NOT EXISTS $_lablesTable (
+            $_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            $_lable TEXT NOT NULL
           )
           ''');
   }
@@ -66,5 +81,36 @@ class DatabaseHelper {
   Future<int> deleteNote(int id) async {
     Database db = await instance.database;
     return await db.delete(_tableName, where: '$_id = ?', whereArgs: [id]);
+  }
+
+  // get all lables from db
+  Future<List<LableModel>> getLables() async {
+    Database db = await instance.database;
+    List<LableModel> lableList = [];
+    final result = await db.query(_lablesTable);
+    for (var element in result) {
+      var note = LableModel.fromJson(element);
+      lableList.add(note);
+    }
+    return lableList;
+  }
+
+  //insert lable to db
+  Future<int> insertLable(LableModel lable) async {
+    Database db = await instance.database;
+    return await db.insert(_lablesTable, lable.toJson());
+  }
+
+  //update lable to db
+  Future<int> updateLable(LableModel lable) async {
+    Database db = await instance.database;
+    return await db.update(_lablesTable, lable.toJson(),
+        where: '$_id = ?', whereArgs: [lable.id]);
+  }
+
+  //delete lable from db
+  Future<int> deleteLable(int id) async {
+    Database db = await instance.database;
+    return await db.delete(_lablesTable, where: '$_id = ?', whereArgs: [id]);
   }
 }

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../pages/add_note_page.dart';
-import '../models/notes_model.dart';
-import '../helper/database_helper.dart';
+import '../utils/constants.dart';
 import '../utils/utils.dart';
+import '../utils/app_colors.dart';
+import '../widgets/app_drawer.dart';
+import '../provider/notes_provider.dart';
+import '../widgets/notes_item.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,12 +17,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final dbHelper = DatabaseHelper.instance;
-  List<NotesModel> _notesList = [];
-
+  final GlobalKey<ScaffoldState> _homeScaffoldKey = GlobalKey<ScaffoldState>();
   _getNotesData() async {
-    _notesList = await dbHelper.getNotes();
-    setState(() {});
+    Provider.of<NotesProvider>(context, listen: false).getNotesData();
   }
 
   @override
@@ -30,34 +31,50 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _homeScaffoldKey,
+      drawer: const AppDrawer(),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'My Notes',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-              ),
-              verticalSpace(10),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _notesList.length,
-                  itemBuilder: (context, index) => _itemWidget(
-                    _notesList[index],
-                  ),
-                ),
-              ),
-            ],
+          child: Consumer<NotesProvider>(
+            builder: (context, notes, _) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _headerView(),
+                  verticalSpace(10),
+                  notes.searchNotesList.isEmpty
+                      ? Center(
+                          child: Text(Constants.noNotesAvailable),
+                        )
+                      : Expanded(
+                          child: ListView.builder(
+                            itemCount: notes.searchNotesList.length,
+                            itemBuilder: (context, index) =>
+                                ChangeNotifierProvider.value(
+                              value: notes.searchNotesList[index],
+                              child: const NotesItem(),
+                            ),
+                          ),
+                        ),
+                ],
+              );
+            },
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        backgroundColor: AppColors.primaryColor,
         onPressed: () {
-          pushNavigator(
+          ScaffoldMessenger.of(context).clearSnackBars();
+          Navigator.push(
             context,
-            const AddNotePage(),
+            MaterialPageRoute(
+              builder: (context) => const AddNotePage(),
+            ),
           );
         },
         child: const Icon(Icons.add),
@@ -65,32 +82,50 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _itemWidget(NotesModel notes) {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: 20,
-          horizontal: 10,
-        ),
-        margin: const EdgeInsets.symmetric(vertical: 5),
-        decoration: BoxDecoration(
-          border: Border.all(width: 0.2),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${notes.title}',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
+// header search bar view
+  Widget _headerView() {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.greyLight,
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: Row(
+        children: [
+          InkWell(
+            onTap: () {
+              _homeScaffoldKey.currentState!.openDrawer();
+            },
+            child: const Icon(Icons.menu),
+          ),
+          horizontalSpace(10),
+          Expanded(
+            child: TextField(
+              cursorColor: AppColors.grey,
+              decoration: InputDecoration(
+                hintText: Constants.searchText,
+                border: InputBorder.none,
+              ),
+              onChanged: (value) {
+                Provider.of<NotesProvider>(context, listen: false)
+                    .searchNotes(value);
+              },
+            ),
+          ),
+          const CircleAvatar(
+            radius: 15,
+            backgroundColor: AppColors.primaryColor,
+            child: Text(
+              'P',
+              style: TextStyle(
+                fontSize: 12,
+                color: AppColors.white,
               ),
             ),
-            verticalSpace(10),
-            Text('${notes.description}'),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

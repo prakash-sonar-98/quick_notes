@@ -1,30 +1,32 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
 NotesModel notesModelFromJson(String str) =>
     NotesModel.fromJson(json.decode(str));
 
 String notesModelToJson(NotesModel data) => json.encode(data.toJson());
 
-class NotesModel {
+class NotesModel with ChangeNotifier {
   NotesModel({
     this.id,
     this.title,
-    this.description,
+    this.notes,
   });
 
   int? id;
   String? title;
-  String? description;
+  String? notes;
 
   factory NotesModel.fromJson(Map<String, dynamic> json) => NotesModel(
         id: json["id"],
         title: json["title"],
-        description: json["description"],
+        notes: json["note"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "title": title,
-        "description": description,
+        "note": notes,
       };
 }
