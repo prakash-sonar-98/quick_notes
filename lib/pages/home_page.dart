@@ -19,7 +19,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _homeScaffoldKey = GlobalKey<ScaffoldState>();
   _getNotesData() async {
-    Provider.of<NotesProvider>(context, listen: false).getNotesData();
+    Provider.of<NotesProvider>(context, listen: false).getLableData();
+    Provider.of<NotesProvider>(context, listen: false)
+        .getNotesData(isActive: true);
   }
 
   @override
@@ -53,7 +55,7 @@ class _HomePageState extends State<HomePage> {
                             itemBuilder: (context, index) =>
                                 ChangeNotifierProvider.value(
                               value: notes.searchNotesList[index],
-                              child: const NotesItem(),
+                              child: const NotesItem(isFromTrash: false),
                             ),
                           ),
                         ),
@@ -96,6 +98,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           InkWell(
             onTap: () {
+              ScaffoldMessenger.of(context).clearSnackBars();
               _homeScaffoldKey.currentState!.openDrawer();
             },
             child: const Icon(Icons.menu),

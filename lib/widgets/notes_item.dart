@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/label_widget.dart';
 import '../models/notes_model.dart';
 import '../pages/add_note_page.dart';
 import '../provider/notes_provider.dart';
 import '../utils/utils.dart';
 
 class NotesItem extends StatelessWidget {
-  const NotesItem({Key? key}) : super(key: key);
+  final bool isFromTrash;
+  const NotesItem({
+    Key? key,
+    required this.isFromTrash,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +20,12 @@ class NotesItem extends StatelessWidget {
     return Dismissible(
       key: Key('${notes.id}'),
       onDismissed: (DismissDirection dir) {
-        _deleteNote(context, notes.id!);
+        ScaffoldMessenger.of(context).clearSnackBars();
+        if (isFromTrash) {
+          _deleteNote(context, notes.id!);
+        } else {
+          _moveToTrash(context, notes);
+        }
       },
       direction: DismissDirection.startToEnd,
       child: InkWell(
@@ -49,6 +59,8 @@ class NotesItem extends StatelessWidget {
               ),
               verticalSpace(10),
               Text('${notes.notes}'),
+              if (notes.lable != null) verticalSpace(10),
+              if (notes.lable != null) LabelWidget(label: notes.lable!),
             ],
           ),
         ),
@@ -58,5 +70,11 @@ class NotesItem extends StatelessWidget {
 
   _deleteNote(BuildContext context, int id) {
     Provider.of<NotesProvider>(context, listen: false).deleteNote(id, context);
+  }
+
+  _moveToTrash(BuildContext context, NotesModel note) {
+    note.isActive = 'false';
+    Provider.of<NotesProvider>(context, listen: false)
+        .moveToTrash(context, note);
   }
 }

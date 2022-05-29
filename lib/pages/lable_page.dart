@@ -53,18 +53,15 @@ class _LablePageState extends State<LablePage> {
     _focusNode.removeListener(() {});
     _focusNode.dispose();
     _lableController.dispose();
+    _resetDrawerSelection();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        _resetDrawerSelection();
-        return Future.value(true);
-      },
-      child: Scaffold(
-        body: SafeArea(
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -120,6 +117,7 @@ class _LablePageState extends State<LablePage> {
                 ),
                 Consumer<NotesProvider>(
                   builder: (context, note, child) => ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: note.lableList.length,
                     itemBuilder: (context, index) =>

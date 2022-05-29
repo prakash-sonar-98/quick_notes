@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/label_widget.dart';
 import '../models/notes_model.dart';
 import '../utils/constants.dart';
 import '../utils/utils.dart';
@@ -21,11 +22,13 @@ class AddNotePage extends StatefulWidget {
 class _AddNotePageState extends State<AddNotePage> {
   final TextEditingController _title = TextEditingController();
   final TextEditingController _notes = TextEditingController();
+  String? _label;
 
   _getNotesData() {
     if (widget.notes != null) {
       _title.text = widget.notes?.title ?? '';
       _notes.text = widget.notes?.notes ?? '';
+      _label = widget.notes?.lable;
     }
   }
 
@@ -33,6 +36,8 @@ class _AddNotePageState extends State<AddNotePage> {
     final note = NotesModel(
       title: _title.text,
       notes: _notes.text,
+      lable: _label,
+      isActive: 'true',
     );
     Provider.of<NotesProvider>(context, listen: false)
         .insertNote(context, note);
@@ -43,6 +48,8 @@ class _AddNotePageState extends State<AddNotePage> {
       id: widget.notes!.id,
       title: _title.text,
       notes: _notes.text,
+      lable: _label,
+      isActive: 'true',
     );
     Provider.of<NotesProvider>(context, listen: false)
         .updateNote(context, note);
@@ -71,7 +78,6 @@ class _AddNotePageState extends State<AddNotePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   GestureDetector(
@@ -80,6 +86,14 @@ class _AddNotePageState extends State<AddNotePage> {
                     },
                     child: const Icon(Icons.arrow_back),
                   ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      _showLableDialog();
+                    },
+                    icon: const Icon(Icons.label_outline),
+                  ),
+                  horizontalSpace(10),
                   InkWell(
                     onTap: () {
                       if (_title.text.isEmpty && _notes.text.isEmpty) {
@@ -116,6 +130,8 @@ class _AddNotePageState extends State<AddNotePage> {
                 ],
               ),
               verticalSpace(20),
+              if (_label != null) LabelWidget(label: _label ?? ''),
+              if (_label != null) verticalSpace(10),
               TextField(
                 controller: _title,
                 style: const TextStyle(
@@ -147,6 +163,31 @@ class _AddNotePageState extends State<AddNotePage> {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // show lables popup
+  _showLableDialog() {
+    final lables = Provider.of<NotesProvider>(context, listen: false).lableList;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(Constants.lables),
+        content: ListView.builder(
+          shrinkWrap: true,
+          itemCount: lables.length,
+          itemBuilder: (context, index) => ListTile(
+            leading: const Icon(Icons.label_outline),
+            title: Text('${lables[index].lable}'),
+            onTap: () {
+              setState(() {
+                _label = lables[index].lable;
+              });
+              Navigator.pop(context);
+            },
           ),
         ),
       ),

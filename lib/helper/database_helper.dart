@@ -40,7 +40,9 @@ class DatabaseHelper {
           CREATE TABLE IF NOT EXISTS $_tableName (
             $_id INTEGER PRIMARY KEY AUTOINCREMENT,
             $_title TEXT NOT NULL,
-            $_note TEXT NOT NULL
+            $_note TEXT NOT NULL,
+            $_lable TEXT NULL,
+            $_isActive TEXT NOT NULL
           )
           ''');
 
@@ -53,10 +55,11 @@ class DatabaseHelper {
   }
 
   // get all notes from db
-  Future<List<NotesModel>> getNotes() async {
+  Future<List<NotesModel>> getNotes(bool isActive) async {
     Database db = await instance.database;
     List<NotesModel> notesList = [];
-    final result = await db.query(_tableName);
+    // final result = await db.query(_tableName);
+    final result = await db.query(_tableName, where: '$_isActive = ?', whereArgs: ['$isActive']);
     for (var element in result) {
       var note = NotesModel.fromJson(element);
       notesList.add(note);

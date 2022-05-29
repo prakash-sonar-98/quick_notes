@@ -8,11 +8,16 @@ class Constants {
   static String note = 'Note';
   static String save = 'Save';
   static String update = 'Update';
+  static String lables = 'Lables';
   static String editLable = 'Edit Lable';
+  static String trash = 'Trash';
   static String createNewLable = 'Create new Lable';
   static String noNotesAvailable = 'No notes available...';
-  static String noteAddedMsg = 'Successfully Added';
-  static String noteUpdatedMsg = 'Successfully Updated';
-  static String noteDeletedMsg = 'Successfully Deleted';
+  static String noNotesInTrash = 'No notes in Trash';
+  static String noteAddedMsg = 'Successfully added';
+  static String noteUpdatedMsg = 'Successfully updated';
+  static String noteDeletedMsg = 'Successfully deleted';
   static String emptyNoteDiscardedMsg = 'Empty note discarded';
+  static String noteMovedToTrashMsg = 'Note moved to trash';
+  static String emptyTrash = 'Empty Trash';
 }

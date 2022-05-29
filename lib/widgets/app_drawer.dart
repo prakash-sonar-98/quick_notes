@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/drawer_Item_model.dart';
+import '../pages/trash_pages.dart';
 import '../pages/home_page.dart';
 import '../pages/lable_page.dart';
 import '../utils/app_colors.dart';
@@ -32,7 +33,7 @@ class _AppDrawerState extends State<AppDrawer> {
       id: 3,
       icon: Icons.delete,
       title: 'Trash',
-      // page: ,
+      page: const TrashPage(),
     ),
   ];
 

@@ -37,6 +37,7 @@ class _LableItemState extends State<LableItem> {
   _deleteLable() {
     Provider.of<NotesProvider>(context, listen: false)
         .deleteLable(widget.lableModel);
+    _focusNode.unfocus();
   }
 
   @override
