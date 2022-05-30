@@ -1,19 +1,19 @@
 import 'package:sqflite/sqflite.dart';
 
 import '../models/notes_model.dart';
-import '../models/lable_model.dart';
+import '../models/label_model.dart';
 
 // database version
 int _databaseVersion = 1;
 // table names
 String _tableName = "notes";
-String _lablesTable = "lables";
+String _labelsTable = "labels";
 // column names
 String _id = "id";
 String _title = "title";
 String _note = "note";
 String _isActive = "isActive";
-String _lable = "lable";
+String _label = "label";
 
 class DatabaseHelper {
   static Database? _database;
@@ -41,25 +41,30 @@ class DatabaseHelper {
             $_id INTEGER PRIMARY KEY AUTOINCREMENT,
             $_title TEXT NOT NULL,
             $_note TEXT NOT NULL,
-            $_lable TEXT NULL,
+            $_label TEXT NULL,
             $_isActive TEXT NOT NULL
           )
           ''');
 
     await db.execute('''
-          CREATE TABLE IF NOT EXISTS $_lablesTable (
+          CREATE TABLE IF NOT EXISTS $_labelsTable (
             $_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            $_lable TEXT NOT NULL
+            $_label TEXT NOT NULL
           )
           ''');
   }
 
   // get all notes from db
-  Future<List<NotesModel>> getNotes(bool isActive) async {
+  Future<List<NotesModel>> getNotes(bool? isActive) async {
     Database db = await instance.database;
     List<NotesModel> notesList = [];
-    // final result = await db.query(_tableName);
-    final result = await db.query(_tableName, where: '$_isActive = ?', whereArgs: ['$isActive']);
+    List<Map<String, Object?>> result;
+    if (isActive != null) {
+      result = await db
+          .query(_tableName, where: '$_isActive = ?', whereArgs: ['$isActive']);
+    } else {
+      result = await db.query(_tableName);
+    }
     for (var element in result) {
       var note = NotesModel.fromJson(element);
       notesList.add(note);
@@ -87,33 +92,33 @@ class DatabaseHelper {
   }
 
   // get all lables from db
-  Future<List<LableModel>> getLables() async {
+  Future<List<LabelModel>> getLabels() async {
     Database db = await instance.database;
-    List<LableModel> lableList = [];
-    final result = await db.query(_lablesTable);
+    List<LabelModel> labelList = [];
+    final result = await db.query(_labelsTable);
     for (var element in result) {
-      var note = LableModel.fromJson(element);
-      lableList.add(note);
+      var note = LabelModel.fromJson(element);
+      labelList.add(note);
     }
-    return lableList;
+    return labelList;
   }
 
   //insert lable to db
-  Future<int> insertLable(LableModel lable) async {
+  Future<int> insertLabel(LabelModel label) async {
     Database db = await instance.database;
-    return await db.insert(_lablesTable, lable.toJson());
+    return await db.insert(_labelsTable, label.toJson());
   }
 
   //update lable to db
-  Future<int> updateLable(LableModel lable) async {
+  Future<int> updateLabel(LabelModel label) async {
     Database db = await instance.database;
-    return await db.update(_lablesTable, lable.toJson(),
-        where: '$_id = ?', whereArgs: [lable.id]);
+    return await db.update(_labelsTable, label.toJson(),
+        where: '$_id = ?', whereArgs: [label.id]);
   }
 
   //delete lable from db
-  Future<int> deleteLable(int id) async {
+  Future<int> deleteLabel(int id) async {
     Database db = await instance.database;
-    return await db.delete(_lablesTable, where: '$_id = ?', whereArgs: [id]);
+    return await db.delete(_labelsTable, where: '$_id = ?', whereArgs: [id]);
   }
 }

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/lable_model.dart';
-import '../widgets/lable_item.dart';
+import '../models/label_model.dart';
+import '../widgets/label_item.dart';
 import '../provider/notes_provider.dart';
 import '../utils/app_colors.dart';
 import '../utils/constants.dart';
 import '../utils/utils.dart';
 
-class LablePage extends StatefulWidget {
-  const LablePage({Key? key}) : super(key: key);
+class LabelPage extends StatefulWidget {
+  const LabelPage({Key? key}) : super(key: key);
 
   @override
-  State<LablePage> createState() => _LablePageState();
+  State<LabelPage> createState() => _LabelPageState();
 }
 
-class _LablePageState extends State<LablePage> {
+class _LabelPageState extends State<LabelPage> {
   final _lableController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
@@ -25,10 +25,11 @@ class _LablePageState extends State<LablePage> {
 
   _addNewLable() {
     if (_lableController.text.isNotEmpty) {
-      final lable = LableModel(
-        lable: _lableController.text,
+      final label = LabelModel(
+        label: _lableController.text,
       );
-      Provider.of<NotesProvider>(context, listen: false).insertLable(lable);
+      Provider.of<NotesProvider>(context, listen: false)
+          .insertLable(context, label);
       _lableController.clear();
     }
   }
@@ -77,7 +78,7 @@ class _LablePageState extends State<LablePage> {
                     ),
                     horizontalSpace(20),
                     Text(
-                      Constants.editLable,
+                      Constants.editLabel,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w400,
@@ -101,9 +102,12 @@ class _LablePageState extends State<LablePage> {
                         controller: _lableController,
                         cursorColor: AppColors.grey,
                         decoration: InputDecoration(
-                          hintText: Constants.createNewLable,
+                          hintText: Constants.createNewLabel,
                           border: InputBorder.none,
                         ),
+                        onSubmitted: (val) {
+                          _addNewLable();
+                        },
                       ),
                     ),
                     if (_focusNode.hasFocus)
@@ -119,9 +123,13 @@ class _LablePageState extends State<LablePage> {
                   builder: (context, note, child) => ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: note.lableList.length,
+                    reverse: true,
+                    itemCount: note.labelList.length,
                     itemBuilder: (context, index) =>
-                        LableItem(lableModel: note.lableList[index]),
+                        ChangeNotifierProvider.value(
+                      value: note.labelList[index],
+                      child: const LabelItem(),
+                    ),
                   ),
                 ),
               ],

@@ -12,21 +12,21 @@ class NotesModel with ChangeNotifier {
     this.id,
     this.title,
     this.notes,
-    this.lable,
+    this.label,
     this.isActive = 'true',
   });
 
   int? id;
   String? title;
   String? notes;
-  String? lable;
+  String? label;
   String? isActive;
 
   factory NotesModel.fromJson(Map<String, dynamic> json) => NotesModel(
         id: json["id"],
         title: json["title"],
         notes: json["note"],
-        lable: json["lable"],
+        label: json["label"],
         isActive: json["isActive"],
       );
 
@@ -34,7 +34,7 @@ class NotesModel with ChangeNotifier {
         "id": id,
         "title": title,
         "note": notes,
-        "lable": lable,
+        "label": label,
         "isActive": isActive,
       };
 }

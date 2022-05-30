@@ -2,48 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/notes_provider.dart';
-import '../models/lable_model.dart';
+import '../models/label_model.dart';
 import '../utils/app_colors.dart';
 
-class LableItem extends StatefulWidget {
-  final LableModel lableModel;
-  const LableItem({
+class LabelItem extends StatefulWidget {
+  const LabelItem({
     Key? key,
-    required this.lableModel,
   }) : super(key: key);
 
   @override
-  State<LableItem> createState() => _LableItemState();
+  State<LabelItem> createState() => _LabelItemState();
 }
 
-class _LableItemState extends State<LableItem> {
-  final _lableController = TextEditingController();
+class _LabelItemState extends State<LabelItem> {
+  final _labelController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
-  _updateLable() {
-    if (widget.lableModel.lable!.toLowerCase() !=
-        _lableController.text.toLowerCase()) {
-      final lable = LableModel(
-        id: widget.lableModel.id,
-        lable: _lableController.text,
+  _updateLable(LabelModel labelModel) {
+    if (labelModel.label!.toLowerCase() !=
+        _labelController.text.toLowerCase()) {
+      final label = LabelModel(
+        id: labelModel.id,
+        label: _labelController.text,
       );
-      Provider.of<NotesProvider>(context, listen: false).updateLable(lable);
+      Provider.of<NotesProvider>(context, listen: false).updateLable(label);
       _focusNode.unfocus();
     } else {
       _focusNode.unfocus();
     }
   }
 
-  _deleteLable() {
-    Provider.of<NotesProvider>(context, listen: false)
-        .deleteLable(widget.lableModel);
-    _focusNode.unfocus();
+  _deleteLable(LabelModel label) {
+    Provider.of<NotesProvider>(context, listen: false).deleteLable(label);
   }
 
   @override
   void initState() {
-    _lableController.text = widget.lableModel.lable ?? '';
-
     super.initState();
     _focusNode.addListener(() {
       if (_focusNode.hasFocus || !_focusNode.hasFocus) {
@@ -56,18 +50,21 @@ class _LableItemState extends State<LableItem> {
   void dispose() {
     _focusNode.removeListener(() {});
     _focusNode.dispose();
-    _lableController.dispose();
+    _labelController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final labels = Provider.of<LabelModel>(context);
+    _labelController.text = labels.label ?? '';
     return ListTile(
       contentPadding: const EdgeInsets.all(0),
       leading: _focusNode.hasFocus
           ? GestureDetector(
               onTap: () {
-                _deleteLable();
+                _focusNode.unfocus();
+                _deleteLable(labels);
               },
               child: const Icon(
                 Icons.delete,
@@ -80,13 +77,13 @@ class _LableItemState extends State<LableItem> {
             ),
       title: TextField(
         focusNode: _focusNode,
-        controller: _lableController,
+        controller: _labelController,
         cursorColor: AppColors.grey,
         decoration: const InputDecoration(
           border: InputBorder.none,
         ),
         onSubmitted: (val) {
-          _updateLable();
+          _updateLable(labels);
         },
       ),
       trailing: GestureDetector(
@@ -94,7 +91,7 @@ class _LableItemState extends State<LableItem> {
           if (!_focusNode.hasFocus) {
             _focusNode.requestFocus();
           } else {
-            _updateLable();
+            _updateLable(labels);
           }
         },
         child: _focusNode.hasFocus

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/drawer_Item_model.dart';
 import '../pages/trash_pages.dart';
 import '../pages/home_page.dart';
-import '../pages/lable_page.dart';
+import '../pages/label_page.dart';
 import '../utils/app_colors.dart';
 import '../utils/utils.dart';
 import '../utils/constants.dart';
@@ -26,8 +26,8 @@ class _AppDrawerState extends State<AppDrawer> {
     DrawerItemModel(
       id: 2,
       icon: Icons.add,
-      title: 'Create new lable',
-      page: const LablePage(),
+      title: 'Create new label',
+      page: const LabelPage(),
     ),
     DrawerItemModel(
       id: 3,

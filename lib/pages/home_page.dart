@@ -32,54 +32,60 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _homeScaffoldKey,
-      drawer: const AppDrawer(),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Consumer<NotesProvider>(
-            builder: (context, notes, _) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _headerView(),
-                  verticalSpace(10),
-                  notes.searchNotesList.isEmpty
-                      ? Center(
-                          child: Text(Constants.noNotesAvailable),
-                        )
-                      : Expanded(
-                          child: ListView.builder(
-                            itemCount: notes.searchNotesList.length,
-                            itemBuilder: (context, index) =>
-                                ChangeNotifierProvider.value(
-                              value: notes.searchNotesList[index],
-                              child: const NotesItem(isFromTrash: false),
+    return WillPopScope(
+      onWillPop: () {
+        appExitDialog(context);
+        return Future.value(false);
+      },
+      child: Scaffold(
+        key: _homeScaffoldKey,
+        drawer: const AppDrawer(),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Consumer<NotesProvider>(
+              builder: (context, notes, _) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _headerView(),
+                    verticalSpace(10),
+                    notes.searchNotesList.isEmpty
+                        ? Center(
+                            child: Text(Constants.noNotesAvailable),
+                          )
+                        : Expanded(
+                            child: ListView.builder(
+                              itemCount: notes.searchNotesList.length,
+                              itemBuilder: (context, index) =>
+                                  ChangeNotifierProvider.value(
+                                value: notes.searchNotesList[index],
+                                child: const NotesItem(isFromTrash: false),
+                              ),
                             ),
                           ),
-                        ),
-                ],
-              );
-            },
+                  ],
+                );
+              },
+            ),
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+        floatingActionButton: FloatingActionButton(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          backgroundColor: AppColors.primaryColor,
+          onPressed: () {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AddNotePage(isEdit: true),
+              ),
+            );
+          },
+          child: const Icon(Icons.add),
         ),
-        backgroundColor: AppColors.primaryColor,
-        onPressed: () {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AddNotePage(),
-            ),
-          );
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }

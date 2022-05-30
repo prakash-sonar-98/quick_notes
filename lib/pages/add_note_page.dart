@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../pages/label_page.dart';
 import '../widgets/label_widget.dart';
 import '../models/notes_model.dart';
 import '../utils/constants.dart';
@@ -10,9 +11,11 @@ import '../provider/notes_provider.dart';
 
 class AddNotePage extends StatefulWidget {
   final NotesModel? notes;
+  final bool isEdit;
   const AddNotePage({
     Key? key,
     this.notes,
+    required this.isEdit,
   }) : super(key: key);
 
   @override
@@ -28,7 +31,7 @@ class _AddNotePageState extends State<AddNotePage> {
     if (widget.notes != null) {
       _title.text = widget.notes?.title ?? '';
       _notes.text = widget.notes?.notes ?? '';
-      _label = widget.notes?.lable;
+      _label = widget.notes?.label;
     }
   }
 
@@ -36,7 +39,7 @@ class _AddNotePageState extends State<AddNotePage> {
     final note = NotesModel(
       title: _title.text,
       notes: _notes.text,
-      lable: _label,
+      label: _label,
       isActive: 'true',
     );
     Provider.of<NotesProvider>(context, listen: false)
@@ -48,11 +51,29 @@ class _AddNotePageState extends State<AddNotePage> {
       id: widget.notes!.id,
       title: _title.text,
       notes: _notes.text,
-      lable: _label,
+      label: _label,
       isActive: 'true',
     );
     Provider.of<NotesProvider>(context, listen: false)
         .updateNote(context, note);
+  }
+
+  _restoreNote() {
+    final note = NotesModel(
+      id: widget.notes!.id,
+      title: _title.text,
+      notes: _notes.text,
+      label: _label,
+      isActive: 'true',
+    );
+    Provider.of<NotesProvider>(context, listen: false).restoreNote(note);
+    Navigator.pop(context);
+  }
+
+  _deleteNote() {
+    Provider.of<NotesProvider>(context, listen: false)
+        .deleteNote(widget.notes!.id!, context);
+    Navigator.pop(context);
   }
 
   @override
@@ -87,52 +108,57 @@ class _AddNotePageState extends State<AddNotePage> {
                     child: const Icon(Icons.arrow_back),
                   ),
                   const Spacer(),
-                  IconButton(
-                    onPressed: () {
-                      _showLableDialog();
-                    },
-                    icon: const Icon(Icons.label_outline),
-                  ),
-                  horizontalSpace(10),
-                  InkWell(
-                    onTap: () {
-                      if (_title.text.isEmpty && _notes.text.isEmpty) {
-                        showSnackBar(context, Constants.emptyNoteDiscardedMsg);
-                        Navigator.pop(context);
-                      } else {
-                        if (widget.notes != null) {
-                          _updateNote();
-                        } else {
-                          _addNote();
-                        }
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 20,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: AppColors.primaryColor,
-                      ),
-                      child: Text(
-                        widget.notes != null
-                            ? Constants.update
-                            : Constants.save,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AppColors.white,
-                        ),
-                      ),
+                  if (widget.isEdit)
+                    IconButton(
+                      onPressed: () {
+                        _showLabelDialog();
+                      },
+                      icon: const Icon(Icons.label_outline),
                     ),
-                  ),
+                  horizontalSpace(10),
+                  widget.isEdit
+                      ? InkWell(
+                          onTap: () {
+                            if (_title.text.isEmpty && _notes.text.isEmpty) {
+                              showSnackBar(
+                                  context, Constants.emptyNoteDiscardedMsg);
+                              Navigator.pop(context);
+                            } else {
+                              if (widget.notes != null) {
+                                _updateNote();
+                              } else {
+                                _addNote();
+                              }
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 20,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: AppColors.primaryColor,
+                            ),
+                            child: Text(
+                              widget.notes != null
+                                  ? Constants.update
+                                  : Constants.save,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: AppColors.white,
+                              ),
+                            ),
+                          ),
+                        )
+                      : _menuButton(),
                 ],
               ),
               verticalSpace(20),
               if (_label != null) LabelWidget(label: _label ?? ''),
               if (_label != null) verticalSpace(10),
               TextField(
+                enabled: widget.isEdit,
                 controller: _title,
                 style: const TextStyle(
                   fontWeight: FontWeight.normal,
@@ -147,6 +173,7 @@ class _AddNotePageState extends State<AddNotePage> {
               ),
               Expanded(
                 child: TextField(
+                  enabled: widget.isEdit,
                   autocorrect: true,
                   autofocus: true,
                   controller: _notes,
@@ -170,27 +197,66 @@ class _AddNotePageState extends State<AddNotePage> {
   }
 
   // show lables popup
-  _showLableDialog() {
-    final lables = Provider.of<NotesProvider>(context, listen: false).lableList;
+  _showLabelDialog() {
+    final lables = Provider.of<NotesProvider>(context, listen: false).labelList;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(Constants.lables),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(Constants.labels),
+            IconButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LabelPage(),
+                  ),
+                );
+              },
+              icon: const Icon(
+                Icons.add,
+                color: AppColors.primaryColor,
+              ),
+            ),
+          ],
+        ),
         content: ListView.builder(
           shrinkWrap: true,
           itemCount: lables.length,
           itemBuilder: (context, index) => ListTile(
             leading: const Icon(Icons.label_outline),
-            title: Text('${lables[index].lable}'),
+            title: Text('${lables[index].label}'),
             onTap: () {
               setState(() {
-                _label = lables[index].lable;
+                _label = lables[index].label;
               });
               Navigator.pop(context);
             },
           ),
         ),
       ),
+    );
+  }
+
+  Widget _menuButton() {
+    return PopupMenuButton(
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          onTap: () {
+            _deleteNote();
+          },
+          child: Text(Constants.deleteForever),
+        ),
+        PopupMenuItem(
+          onTap: () {
+            _restoreNote();
+          },
+          child: Text(Constants.restore),
+        ),
+      ],
+      child: const Icon(Icons.more_vert),
     );
   }
 }

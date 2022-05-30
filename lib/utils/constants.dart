@@ -8,10 +8,10 @@ class Constants {
   static String note = 'Note';
   static String save = 'Save';
   static String update = 'Update';
-  static String lables = 'Lables';
-  static String editLable = 'Edit Lable';
+  static String labels = 'Labels';
+  static String editLabel = 'Edit Label';
   static String trash = 'Trash';
-  static String createNewLable = 'Create new Lable';
+  static String createNewLabel = 'Create new Label';
   static String noNotesAvailable = 'No notes available...';
   static String noNotesInTrash = 'No notes in Trash';
   static String noteAddedMsg = 'Successfully added';
@@ -20,4 +20,10 @@ class Constants {
   static String emptyNoteDiscardedMsg = 'Empty note discarded';
   static String noteMovedToTrashMsg = 'Note moved to trash';
   static String emptyTrash = 'Empty Trash';
+  static String alreadyExistsMsg = 'Already exists';
+  static String deleteForever = 'Delete forever';
+  static String restore = 'Restore';
+  static String appExitMsg = 'Are you sure you want quit app?';
+  static String yes = 'Yes';
+  static String no = 'No';
 }

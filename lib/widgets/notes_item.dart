@@ -34,7 +34,10 @@ class NotesItem extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddNotePage(notes: notes),
+              builder: (context) => AddNotePage(
+                notes: notes,
+                isEdit: isFromTrash ? false : true,
+              ),
             ),
           );
         },
@@ -59,8 +62,8 @@ class NotesItem extends StatelessWidget {
               ),
               verticalSpace(10),
               Text('${notes.notes}'),
-              if (notes.lable != null) verticalSpace(10),
-              if (notes.lable != null) LabelWidget(label: notes.lable!),
+              if (notes.label != null) verticalSpace(10),
+              if (notes.label != null) LabelWidget(label: notes.label!),
             ],
           ),
         ),

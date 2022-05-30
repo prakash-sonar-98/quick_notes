@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../helper/database_helper.dart';
-import '../models/lable_model.dart';
+import '../models/label_model.dart';
 import '../models/notes_model.dart';
 import '../utils/constants.dart';
 import '../utils/utils.dart';
@@ -14,8 +14,8 @@ class NotesProvider with ChangeNotifier {
   List<NotesModel> notesList = [];
   List<NotesModel> searchNotesList = [];
 
-  //lable list
-  List<LableModel> lableList = [];
+  //label list
+  List<LabelModel> labelList = [];
 
   // trash list
   List<NotesModel> trashList = [];
@@ -41,7 +41,7 @@ class NotesProvider with ChangeNotifier {
     final list = await dbHelper.getNotes(isActive);
     if (isActive) {
       notesList = list;
-      searchNotesList = notesList;
+      searchNotesList = notesList.reversed.toList();
     } else {
       trashList = list;
     }
@@ -54,7 +54,7 @@ class NotesProvider with ChangeNotifier {
       (value) {
         note.id = value;
         notesList.add(note);
-        searchNotesList = notesList;
+        searchNotesList = notesList.reversed.toList();
         notifyListeners();
         Navigator.pop(context);
         showSnackBar(context, Constants.noteAddedMsg);
@@ -72,6 +72,16 @@ class NotesProvider with ChangeNotifier {
         notifyListeners();
         Navigator.pop(context);
         showSnackBar(context, Constants.noteUpdatedMsg);
+      },
+    );
+  }
+
+  //restore notes
+  restoreNote(NotesModel note) {
+    dbHelper.updateNote(note).then(
+      (value) {
+        trashList.removeWhere((element) => element.id == note.id);
+        getNotesData(isActive: true);
       },
     );
   }
@@ -111,48 +121,57 @@ class NotesProvider with ChangeNotifier {
 
   // get lables
   getLableData() async {
-    lableList = await dbHelper.getLables();
+    labelList = await dbHelper.getLabels();
     notifyListeners();
   }
 
-  // insert lable
-  insertLable(LableModel lable) {
-    dbHelper.insertLable(lable).then(
+  // insert label
+  insertLable(BuildContext context, LabelModel label) {
+    int index = labelList.indexWhere((element) =>
+        element.label!.toLowerCase() == label.label!.toLowerCase());
+    if (index == -1) {
+      // new label
+      dbHelper.insertLabel(label).then(
+        (value) {
+          label.id = value;
+          labelList.add(label);
+          notifyListeners();
+        },
+      );
+    } else {
+      // already exists
+      showSnackBar(context, Constants.alreadyExistsMsg);
+    }
+  }
+
+  // update label
+  updateLable(LabelModel label) {
+    dbHelper.updateLabel(label).then(
       (value) {
-        lable.id = value;
-        lableList.add(lable);
-        notifyListeners();
+        int index = labelList.indexWhere((element) => element.id == label.id);
+        String oldLabel = labelList[index].label!;
+        labelList[index] = label;
+        _updateLabelNameInNote(oldLabel, label.label!);
       },
     );
   }
 
-  // update lable
-  updateLable(LableModel lable) {
-    dbHelper.updateLable(lable).then(
+  // delete label
+  deleteLable(LabelModel label) {
+    dbHelper.deleteLabel(label.id!).then(
       (value) {
-        int index = lableList.indexWhere((element) => element.id == lable.id);
-        String oldLabel = lableList[index].lable!;
-        lableList[index] = lable;
-        _updateLabelNameInNote(oldLabel, lable.lable!);
-      },
-    );
-  }
-
-  // delete lable
-  deleteLable(LableModel lable) {
-    dbHelper.deleteLable(lable.id!).then(
-      (value) {
-        lableList.removeWhere((element) => element.id == lable.id);
-        _deleteLabelInNotes(lable.lable!);
+        labelList.removeWhere((element) => element.id == label.id);
+        _deleteLabelInNotes(label.label!);
       },
     );
   }
 
   // update label name in notes list if user updates label name
-  _updateLabelNameInNote(String oldLabel, String newLabel) {
-    for (var element in notesList) {
-      if (element.lable == oldLabel) {
-        element.lable = newLabel;
+  _updateLabelNameInNote(String oldLabel, String newLabel) async {
+    final list = await dbHelper.getNotes(null);
+    for (var element in list) {
+      if (element.label == oldLabel) {
+        element.label = newLabel;
         dbHelper.updateNote(element);
       }
     }
@@ -160,10 +179,11 @@ class NotesProvider with ChangeNotifier {
   }
 
   // delete label name in notes list if user delete label
-  _deleteLabelInNotes(String label) {
-    for (var element in notesList) {
-      if (element.lable == label) {
-        element.lable = null;
+  _deleteLabelInNotes(String label) async {
+    final list = await dbHelper.getNotes(null);
+    for (var element in list) {
+      if (element.label == label) {
+        element.label = null;
         dbHelper.updateNote(element);
       }
     }
