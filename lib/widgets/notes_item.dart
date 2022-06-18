@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../utils/app_colors.dart';
 import '../widgets/label_widget.dart';
 import '../models/notes_model.dart';
 import '../pages/add_note_page.dart';
@@ -48,7 +49,10 @@ class NotesItem extends StatelessWidget {
           ),
           margin: const EdgeInsets.symmetric(vertical: 5),
           decoration: BoxDecoration(
-            border: Border.all(width: 0.2),
+            border: Border.all(
+              width: 0.2,
+              color: AppColors.black,
+            ),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Column(

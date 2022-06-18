@@ -51,20 +51,22 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     _headerView(),
                     verticalSpace(10),
-                    notes.searchNotesList.isEmpty
-                        ? Center(
-                            child: Text(Constants.noNotesAvailable),
-                          )
-                        : Expanded(
-                            child: ListView.builder(
-                              itemCount: notes.searchNotesList.length,
-                              itemBuilder: (context, index) =>
-                                  ChangeNotifierProvider.value(
-                                value: notes.searchNotesList[index],
-                                child: const NotesItem(isFromTrash: false),
+                    notes.notesList.isEmpty
+                        ? _noNotesView()
+                        : notes.searchNotesList.isEmpty
+                            ? Center(
+                                child: Text(Constants.noNotesAvailable),
+                              )
+                            : Expanded(
+                                child: ListView.builder(
+                                  itemCount: notes.searchNotesList.length,
+                                  itemBuilder: (context, index) =>
+                                      ChangeNotifierProvider.value(
+                                    value: notes.searchNotesList[index],
+                                    child: const NotesItem(isFromTrash: false),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
                   ],
                 );
               },
@@ -141,6 +143,24 @@ class _HomePageState extends State<HomePage> {
               },
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  // empty notes view
+  Widget _noNotesView() {
+    return Center(
+      child: Column(
+        children: [
+          verticalSpace(MediaQuery.of(context).size.height * 0.25),
+          Icon(
+            Icons.lightbulb_outline,
+            color: AppColors.amber,
+            size: 120,
+          ),
+          verticalSpace(10),
+          Text(Constants.noteYouAddAppearHere),
         ],
       ),
     );

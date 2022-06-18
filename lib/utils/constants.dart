@@ -18,6 +18,7 @@ class Constants {
   static String trash = 'Trash';
   static String createNewLabel = 'Create new Label';
   static String noNotesAvailable = 'No notes available...';
+  static String noteYouAddAppearHere = 'Notes you add appear here';
   static String noNotesInTrash = 'No notes in Trash';
   static String noteAddedMsg = 'Successfully added';
   static String noteUpdatedMsg = 'Successfully updated';
