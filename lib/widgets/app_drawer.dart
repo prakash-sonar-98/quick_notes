@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/drawer_Item_model.dart';
+import '../pages/settings_page.dart';
 import '../pages/trash_pages.dart';
 import '../pages/home_page.dart';
 import '../pages/label_page.dart';
@@ -34,6 +35,12 @@ class _AppDrawerState extends State<AppDrawer> {
       icon: Icons.delete,
       title: 'Trash',
       page: const TrashPage(),
+    ),
+    DrawerItemModel(
+      id: 4,
+      icon: Icons.settings,
+      title: 'Settings',
+      page: const SettingsPage(),
     ),
   ];
 
@@ -101,9 +108,9 @@ class _AppDrawerState extends State<AppDrawer> {
         child: Container(
           alignment: Alignment.center,
           decoration: isSelected
-              ? const BoxDecoration(
+              ? BoxDecoration(
                   color: AppColors.greyLight,
-                  borderRadius: BorderRadius.horizontal(
+                  borderRadius: const BorderRadius.horizontal(
                     right: Radius.circular(20),
                   ),
                 )

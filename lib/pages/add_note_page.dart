@@ -144,7 +144,7 @@ class _AddNotePageState extends State<AddNotePage> {
                               widget.notes != null
                                   ? Constants.update
                                   : Constants.save,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 14,
                                 color: AppColors.white,
                               ),
@@ -215,7 +215,7 @@ class _AddNotePageState extends State<AddNotePage> {
                   ),
                 );
               },
-              icon: const Icon(
+              icon: Icon(
                 Icons.add,
                 color: AppColors.primaryColor,
               ),

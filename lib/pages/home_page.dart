@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../provider/login_provider.dart';
 import '../pages/add_note_page.dart';
 import '../utils/constants.dart';
 import '../utils/utils.dart';
@@ -123,15 +124,21 @@ class _HomePageState extends State<HomePage> {
               },
             ),
           ),
-          const CircleAvatar(
+          CircleAvatar(
             radius: 15,
             backgroundColor: AppColors.primaryColor,
-            child: Text(
-              'P',
-              style: TextStyle(
-                fontSize: 12,
-                color: AppColors.white,
-              ),
+            child: Consumer<LoginProvider>(
+              builder: (context, login, _) {
+                return Text(
+                  login.userName != null && login.userName!.isNotEmpty
+                      ? login.userName!.substring(0, 1).toUpperCase()
+                      : '',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.white,
+                  ),
+                );
+              },
             ),
           ),
         ],

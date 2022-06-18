@@ -66,12 +66,12 @@ class _LabelItemState extends State<LabelItem> {
                 _focusNode.unfocus();
                 _deleteLable(labels);
               },
-              child: const Icon(
+              child: Icon(
                 Icons.delete,
                 color: AppColors.black,
               ),
             )
-          : const Icon(
+          : Icon(
               Icons.label_outline,
               color: AppColors.black,
             ),
@@ -95,11 +95,11 @@ class _LabelItemState extends State<LabelItem> {
           }
         },
         child: _focusNode.hasFocus
-            ? const Icon(
+            ? Icon(
                 Icons.check,
                 color: AppColors.black,
               )
-            : const Icon(
+            : Icon(
                 Icons.edit,
                 color: AppColors.black,
               ),

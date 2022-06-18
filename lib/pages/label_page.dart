@@ -34,10 +34,6 @@ class _LabelPageState extends State<LabelPage> {
     }
   }
 
-  _resetDrawerSelection() {
-    Constants.selectedDrawerItem = 1;
-  }
-
   @override
   void initState() {
     _getLableData();
@@ -54,7 +50,7 @@ class _LabelPageState extends State<LabelPage> {
     _focusNode.removeListener(() {});
     _focusNode.dispose();
     _lableController.dispose();
-    _resetDrawerSelection();
+    resetDrawerSelection();
     super.dispose();
   }
 
@@ -71,7 +67,7 @@ class _LabelPageState extends State<LabelPage> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        _resetDrawerSelection();
+                        resetDrawerSelection();
                         Navigator.pop(context);
                       },
                       child: const Icon(Icons.arrow_back),

@@ -22,7 +22,7 @@ class LabelWidget extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           color: AppColors.primaryColor,
           fontWeight: FontWeight.w600,
         ),

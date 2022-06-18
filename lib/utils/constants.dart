@@ -3,6 +3,11 @@ class Constants {
   static int selectedDrawerItem = 1;
   // strings
   static String appName = 'Quick Notes';
+  static String login = 'Login';
+  static String fullName = 'Full Name';
+  static String getStarted = 'Get Started';
+  static String enterValidNameMsg = 'Enter valid name';
+
   static String searchText = 'Search your notes';
   static String title = 'Title';
   static String note = 'Note';
@@ -26,4 +31,10 @@ class Constants {
   static String appExitMsg = 'Are you sure you want quit app?';
   static String yes = 'Yes';
   static String no = 'No';
+  static String settings = 'Settings';
+  static String darkMode = 'Dark Mode';
+
+  // Shared Preference keys
+  static const loginKey = 'Login';
+  static const isDarkMode = 'IsDarkMode';
 }

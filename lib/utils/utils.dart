@@ -46,3 +46,8 @@ appExitDialog(BuildContext context) {
     ),
   );
 }
+
+// reset drawer selection
+resetDrawerSelection() {
+  Constants.selectedDrawerItem = 1;
+}
