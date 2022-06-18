@@ -1,16 +1,14 @@
-# quick_notes
+# Quick Notes
 
-A new Flutter project.
+This is a clone of the Google Keep App that everyone can take notes into. It is developed using flutter.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Clone this repository
+- To clone this repository, type git clone https://github.com/prakash-sonar-98/quick_notes.git on your terminal
+- Install all the dependencies of this project by typing flutter pub get on your terminal.
+- To run the project type flutter run on your terminal
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Contact
+- Prakash Sonar - sonarprakash1@gmail.com
+- Project link - https://github.com/prakash-sonar-98/quick_notes
